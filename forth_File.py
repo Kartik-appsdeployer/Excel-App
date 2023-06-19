@@ -40,8 +40,12 @@ def process_file(file_path):
         'Dept.': [],
         'Date': [],
         'RMARK': [],
-        'Co+':[],
-        'WrkdHrs': [],
+        'INCR': [],
+        'PL': [],
+        'plop': [],
+        'coop': [],
+        'Upload Co+':[],
+        'net co':[],
         'OT': [],
         'PH': [],
         'tot_d': [],
@@ -50,7 +54,12 @@ def process_file(file_path):
         'Late': [],
         'appl leave': [],
         'abs': [],
+        'net abs': [],
         'esic': [],
+        'Co-': [],
+        'plcl': [],
+        'cocl': [],
+        'pl closing': [],
     }
     CO = []
     tot_d=[]
@@ -62,6 +71,16 @@ def process_file(file_path):
     ABS = []
     Late = []
     Esic = []
+    INCR = []
+    plop = []
+    coop = []
+    net_abs = []
+    net_co = []
+    cominus = []
+    PL = []
+    plcl = []
+    cocl = []
+    pl_closing = []
     TotalDays = 0
     Co = 0
     Ot = 0
@@ -72,6 +91,13 @@ def process_file(file_path):
     abs = 0
     late = 0
     esic = 0
+    netCo = 0
+    Cominus = 0
+    pl = 0
+    PLOP = 0
+    PLCL = 0
+    COCL = 0
+    PL_closing = 0
     try:
         for i in range(len(Code) - 1):
             if(Code[i] == Code[i + 1]):
@@ -112,6 +138,31 @@ def process_file(file_path):
                 ABS.append(abs)
                 Late.append(late)
                 Esic.append(esic)
+                INCR.append(round((PR_D * 6)/31, 1))
+                PLOP = round((PR_D * 6)/31, 1)
+                plop.append(PLOP)
+                net_abs.append(abs + late)
+                coop.append(0)
+                netCo = 0 + (2 * Co)
+                net_co.append(netCo)
+                if Leave > netCo:
+                    Cominus = netCo
+                else:
+                    Cominus = Leave
+                cominus.append(Cominus)
+                if(Leave > Cominus):
+                    if((Leave - Cominus) > PLOP):
+                        pl = PLOP
+                    else:
+                        pl = Leave - Cominus
+                PL.append(pl)
+                PLCL = PLOP - pl
+                plcl.append(PLCL)
+                COCL = netCo - Cominus
+                cocl.append(COCL)      
+                PL_closing = PLCL
+                pl_closing.append(PL_closing)         
+                
                 TotalDays = 0
                 Co = 0
                 PR_D = 0
@@ -119,6 +170,8 @@ def process_file(file_path):
                 Leave = 0
                 abs = 0
                 late = 0
+                PLOP = 0
+                netCo = 0
                 
     except Exception as e:
         print(Code[i], Code[i + 1])
@@ -134,31 +187,41 @@ def process_file(file_path):
     ABS.append(None)
     Late.append(None)
     Esic.append(None)
+    INCR.append(None)
+    plop.append(None)
+    net_abs.append(None)
+    coop.append(None)
+    net_co.append(None)
+    cominus.append(None)
+    PL.append(None)
+    plcl.append(None)
+    cocl.append(None)
+    pl_closing.append(None)
     output_file_path = os.path.join(os.path.dirname(file_path), 'new_file.xlsx')
     df1['Code'] = Unique_Code
     df1['EmpName'] = Unique_EmpName
+    print(tot_d)
     df1['tot_d'] = tot_d
-    df1['Co+'] = CO
+    df1['Upload Co+'] = CO
     df1['OT'] = OT
     df1['pr_d'] = pr_d
     df1['PH'] = PH
     df1['WO'] = WO
+    df1['plop'] = plop
     df1['appl leave'] = leave
     df1['abs'] = ABS
     df1['Late'] = Late
     df1['esic'] = Esic
+    df1['INCR'] = INCR
+    df1['net abs'] = net_abs
+    df1['net co'] = net_co
+    df1['coop'] = coop
+    df1['Co-'] = cominus
+    df1['PL'] = PL
+    df1['plcl'] = plcl
+    df1['cocl'] = cocl
+    df1['pl closing'] = pl_closing
     
-    df1.at[len(df1['EmpName']) + 1, 'EmpName'] = "Grand Total"
-    df1.at[len(df1['tot_d']), 'tot_d'] = df1['tot_d'].sum()
-    df1.at[len(df1['OT']), 'OT'] = df1['OT'].sum()
-    df1.at[len(df1['pr_d']), 'pr_d'] = df1['pr_d'].sum()
-    df1.at[len(df1['PH']), 'PH'] = df1['PH'].sum()
-    df1.at[len(df1['WO']), 'WO'] = df1['WO'].sum()
-    df1.at[len(df1['abs']), 'abs'] = df1['abs'].sum()
-    df1.at[len(df1['Late']), 'Late'] = df1['Late'].sum()
-    df1.at[len(df1['esic']), 'esic'] = df1['esic'].sum()
-    df1.at[len(df1['appl leave']), 'appl leave'] = df1['appl leave'].sum()
-    df1.at[len(df1['Co+']), 'Co+'] = df1['Co+'].sum()
     df1.to_excel(output_file_path, index=False)
     success_label.config(text="new_file.xlsx generated successfully!")
 
