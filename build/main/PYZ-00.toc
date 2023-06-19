@@ -1,0 +1,3 @@
+('C:\\Users\\kartik kulshreshtha\\Desktop\\Placement\\Appsdeployer\\Internship '
+ 'Work\\New Excel Generator Using Tkinter\\build\\main\\PYZ-00.pyz',
+ [])
